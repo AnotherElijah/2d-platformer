@@ -3,7 +3,7 @@ import {prepareRexPlugin, randomNum} from "./common.js";
 var player1;
 var bomb;
 var cursors;
-var mushroom;
+
 
 export default class disasters extends Phaser.Scene {
     constructor() {
@@ -70,15 +70,17 @@ export default class disasters extends Phaser.Scene {
 
         }, this);
 
-
+        var pointer = this.input.activePointer;
         /*add group mushroom*/
         this.mushroomGroup = this.add.group();
         /*create mooshroom*/
-        this.input.on('pointerdown', (e) => {
-
-            this.createMushroom(e);
-        });
-
+        this.input.on('pointerdown', function (pointer, gameObject) {
+            console.log(gameObject);
+            if (gameObject) {
+                this.addShield()
+            }
+            this.createMushroom(pointer.x, pointer.y);
+        }, this);
     }
 
     update() {
@@ -105,11 +107,22 @@ export default class disasters extends Phaser.Scene {
             }*/
     }
 
-    createMushroom(e) {
-        mushroom = this.physics.add.sprite(e.x, e.y, 'items', 2);
-        mushroom.hp = 100;
+    createMushroom(x, y) {
+        /*add click on sprite mushroom*/
+        this.mushroom = this.physics.add.sprite(x, y, 'items', 2);
+        this.mushroom.hp = 100;
+        this.mushroom.inputEnable = true;
+        this.mushroom.setInteractive();
+        //
+        // this.mushroom.on('pointerdown', (e) => {
+        //     console.log(e);
+        //     this.addShield();
+        // });
 
-        this.mushroomGroup.add(mushroom);
-        console.log(this.mushroomGroup);
+        this.mushroomGroup.add(this.mushroom);
+    }
+
+    addShield() {
+        console.log('SHIELD')
     }
 }
