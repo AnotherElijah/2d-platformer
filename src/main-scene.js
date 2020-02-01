@@ -20,6 +20,9 @@ export default class mainScene extends Phaser.Scene {
             mushroom = this.physics.add.sprite(e.x, e.y, 'items', 2);
             mushroom.hp = 100;
             mushroom.id = this.IDitemOfArr(this.state.mushrooms);
+            mushroom.inputEnable = true;
+            mushroom.setInteractive();
+
             this.mushroomGroup.add(mushroom);
             this.state.mushroomCD.cd = this.state.mushroomCD.wait;
             this.state.mushrooms.push(mushroom);
@@ -116,16 +119,13 @@ export default class mainScene extends Phaser.Scene {
         /*add group mushroom*/
         this.mushroomGroup = this.add.group();
         /*create mooshroom*/
-        this.input.on('pointerdown', function (pointer, gameObject) {
+        this.input.on('pointerdown', function (e, gameObject) {
             console.log(gameObject);
             if (gameObject) {
                 this.addShield()
             }
-            this.createMushroom(pointer.x, pointer.y);
-        }, this);
-        this.input.on('pointerdown', (e) => {
             this.checkCD(this.state.mushroomCD.cd, ()=>this.createMushroom(e));
-        });
+        }, this);
 
         let timedEvent = this.time.addEvent({ delay: 1000, callback: this.updateCd, callbackScope: this, loop: true });
 
@@ -158,20 +158,7 @@ export default class mainScene extends Phaser.Scene {
             }*/
     }
 
-    createMushroom(x, y) {
-        /*add click on sprite mushroom*/
-        this.mushroom = this.physics.add.sprite(x, y, 'items', 2);
-        this.mushroom.hp = 100;
-        this.mushroom.inputEnable = true;
-        this.mushroom.setInteractive();
-        //
-        // this.mushroom.on('pointerdown', (e) => {
-        //     console.log(e);
-        //     this.addShield();
-        // });
 
-        this.mushroomGroup.add(this.mushroom);
-    }
 
     addShield() {
         console.log('SHIELD')
