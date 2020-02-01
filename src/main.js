@@ -1,5 +1,5 @@
 import {prepareRexPlugin, randomNum} from './common.js';
-import disasters from "./disasters.js";
+import mainScene from "./main-scene.js";
 
 
 let config = {
@@ -19,7 +19,7 @@ let config = {
         }
     },
     backgroundColor: '#eee',
-    scene: [disasters],
+    scene: [mainScene],
     pixelArt: true,
     zoom: 2
 };
