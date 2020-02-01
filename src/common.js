@@ -5,7 +5,7 @@ export function prepareRexPlugin (plugins, dot) {
         speed: 600,
         rotateToTarget: true
     }).on('complete', function(){
-        console.log('object finished moving');
+        // console.log('object finished moving');
     });
 };
 
