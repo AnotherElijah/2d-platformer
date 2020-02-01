@@ -1,14 +1,14 @@
 import {prepareRexPlugin, randomNum} from './common.js';
 import disasters from "./disasters.js";
 
+
 let config = {
     type: Phaser.AUTO,
     width: 800,
     height: 600,
     //масштабирование
     scale: {
-        mode: Phaser.Scale.FIT
-        ,
+        mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
     physics: {

@@ -1,13 +1,17 @@
 import {prepareRexPlugin, randomNum} from "./common.js";
+
 var player1;
 var bomb;
 var cursors;
-export default class disasters extends Phaser.Scene{
-    constructor(){
+var mushroom;
+
+export default class disasters extends Phaser.Scene {
+    constructor() {
         super('disasters');
     }
 
     preload() {
+        this.load.spritesheet('items', 'assets/mushroom.png', {frameWidth: 50, frameHeight: 50});
         this.load.image('sky', 'assets/sky.png');
         this.load.image('ground', 'assets/platform.png');
         this.load.image('star', 'assets/star.png');
@@ -45,7 +49,7 @@ export default class disasters extends Phaser.Scene{
 
         function reduceHP(obj) {
             obj.hp = obj.hp - 1;
-            console.log(obj);
+            // console.log(obj);
         }
 
         /*meteor rain*/
@@ -65,10 +69,19 @@ export default class disasters extends Phaser.Scene{
             this.cameras.main.shake(500, 0.02);
 
         }, this);
+
+
+        /*add group mushroom*/
+        this.mushroomGroup = this.add.group();
+        /*create mooshroom*/
+        this.input.on('pointerdown', (e) => {
+
+            this.createMushroom(e);
+        });
+
     }
 
     update() {
-
 
         /*    if (cursors.left.isDown) {
                 player1.setVelocityX(-160);
@@ -92,5 +105,11 @@ export default class disasters extends Phaser.Scene{
             }*/
     }
 
+    createMushroom(e) {
+        mushroom = this.physics.add.sprite(e.x, e.y, 'items', 2);
+        mushroom.hp = 100;
 
+        this.mushroomGroup.add(mushroom);
+        console.log(this.mushroomGroup);
+    }
 }
