@@ -3,12 +3,47 @@ import {prepareRexPlugin, randomNum} from "./common.js";
 var player1;
 var bomb;
 var cursors;
+var mushroom;
+var cdInfo;
+let world;
 
-
-export default class disasters extends Phaser.Scene {
+export default class mainScene extends Phaser.Scene {
     constructor() {
-        super('disasters');
+        super('mainScene');
     }
+
+    IDitemOfArr(arr){
+        return arr.length? arr.length+1: 1;
+    }
+
+    createMushroom(e) {
+            mushroom = this.physics.add.sprite(e.x, e.y, 'items', 2);
+            mushroom.hp = 100;
+            mushroom.id = this.IDitemOfArr(this.state.mushrooms);
+            this.mushroomGroup.add(mushroom);
+            this.state.mushroomCD.cd = this.state.mushroomCD.wait;
+            this.state.mushrooms.push(mushroom);
+
+            console.log(this.state);
+    }
+
+    checkCD(cd, createFunc){
+        if (cd===0){
+            createFunc();
+        }
+    }
+
+    updateCd(step = 1){
+        if(this.state.mushroomCD.cd!==0){
+            this.state.mushroomCD.cd -= step;
+        }
+    }
+
+    reduceHP(obj) {
+        obj.hp = obj.hp - 1;
+    }
+
+    state = {};
 
     preload() {
         this.load.spritesheet('items', 'assets/mushroom.png', {frameWidth: 50, frameHeight: 50});
@@ -18,6 +53,14 @@ export default class disasters extends Phaser.Scene {
         this.load.image('bomb', 'assets/bomb.png');
         this.load.spritesheet('dude', 'assets/dude.png', {frameWidth: 32, frameHeight: 48});
 
+        this.state = {
+            mushroomCD: {
+                cd: 2,
+                wait: 2
+            },
+            mushrooms: []
+        };
+
         /*move to mouse*/
         var url;
         url = 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexmovetoplugin.min.js';
@@ -26,7 +69,7 @@ export default class disasters extends Phaser.Scene {
 
     create() {
 
-        this.add.image(400, 300, 'sky');
+        world = this.add.image(400, 300, 'sky').setInteractive();
         const player1 = this.physics.add.sprite(200, 100, 'dude');
         player1.setBounce(0.2);
         player1.hp = 100;
@@ -36,21 +79,20 @@ export default class disasters extends Phaser.Scene {
         */
         cursors = this.input.keyboard.createCursorKeys();
 
+        /*text*/
+        cdInfo = this.add.text(100, 100, this.state.mushroomCD.cd);
+        /*text-end*/
+
         /*wind*/
         let dot = this.physics.add.sprite(-randomNum(20, 20), randomNum(0, 600), 'bomb');
         dot.moveTo = prepareRexPlugin(this.plugins, dot);
-        this.input.on('pointerdown', function () {
+        this.input.on('pointerdown', function (e) {
             //dot.moveTo.moveTo(randomNum(820, 820), randomNum(0, 600));
             dot.moveTo.moveTo(250, 100);
         });
         /*wind end*/
 
-        this.physics.add.overlap(player1, dot, () => reduceHP(player1), null, this);
-
-        function reduceHP(obj) {
-            obj.hp = obj.hp - 1;
-            // console.log(obj);
-        }
+        this.physics.add.overlap(player1, dot, () => this.reduceHP(player1), null, this);
 
         /*meteor rain*/
         let createPoint = (x = randomNum(30, 770), y = randomNum(30, 570)) => {
@@ -64,11 +106,11 @@ export default class disasters extends Phaser.Scene {
         fewObjects(createPoint, 1);
 
         /*shake*/
-        this.input.on('pointerdown', function () {
+        /*this.input.on('pointerdown', function () {
 
             this.cameras.main.shake(500, 0.02);
 
-        }, this);
+        }, this);*/
 
         var pointer = this.input.activePointer;
         /*add group mushroom*/
@@ -81,10 +123,19 @@ export default class disasters extends Phaser.Scene {
             }
             this.createMushroom(pointer.x, pointer.y);
         }, this);
+        this.input.on('pointerdown', (e) => {
+            this.checkCD(this.state.mushroomCD.cd, ()=>this.createMushroom(e));
+        });
+
+        let timedEvent = this.time.addEvent({ delay: 1000, callback: this.updateCd, callbackScope: this, loop: true });
+
     }
 
     update() {
 
+        /*panel*/
+        cdInfo.setText('Next mushroom: \n' + this.state.mushroomCD.cd);
+        /*panel-end*/
         /*    if (cursors.left.isDown) {
                 player1.setVelocityX(-160);
 
