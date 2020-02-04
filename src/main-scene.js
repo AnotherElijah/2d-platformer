@@ -49,8 +49,11 @@ export default class mainScene extends Phaser.Scene {
     state = {};
 
     preload() {
+
+        this.load.image('tiles', 'assets/land/mushroom_rocket_ground.png');
+        this.load.tilemapCSV('map', 'assets/land/mushroom_rocket_ground_GRASS BG.csv');
+
         this.load.spritesheet('items', 'assets/mushroom.png', {frameWidth: 50, frameHeight: 50});
-        this.load.image('sky', 'assets/sky.png');
         this.load.image('ground', 'assets/platform.png');
         this.load.image('star', 'assets/star.png');
         this.load.image('bomb', 'assets/bomb.png');
@@ -71,8 +74,12 @@ export default class mainScene extends Phaser.Scene {
     }
 
     create() {
-
+        var map = this.make.tilemap({ key: 'map', tileWidth: 32, tileHeight: 32, width: 39, height: 22});
+        var tileset = map.addTilesetImage('tiles');
+        var layer = map.createStaticLayer(0, tileset, 0, 0); // layer index, til
+/*
         world = this.add.image(400, 300, 'sky').setInteractive();
+*/
         const player1 = this.physics.add.sprite(200, 100, 'dude');
         player1.setBounce(0.2);
         player1.hp = 100;
@@ -109,11 +116,11 @@ export default class mainScene extends Phaser.Scene {
         fewObjects(createPoint, 1);
 
         /*shake*/
-        /*this.input.on('pointerdown', function () {
+        this.input.on('pointerdown', function () {
 
             this.cameras.main.shake(500, 0.02);
 
-        }, this);*/
+        }, this);
 
         var pointer = this.input.activePointer;
         /*add group mushroom*/

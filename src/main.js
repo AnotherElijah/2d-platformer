@@ -4,8 +4,8 @@ import mainScene from "./main-scene.js";
 
 let config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
+    width: 1248,
+    height: 704,
     //масштабирование
     scale: {
         mode: Phaser.Scale.FIT,
